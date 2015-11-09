@@ -21,7 +21,7 @@ limited to) APIs that exchange JSON data.
 Specification
 -------------
 
-The main building block of ABE is a JSON file that illustrates one API call.
+The main building block of ABE is a JSON file that illustrates an API endpoint.
 One API call is an HTTP request that consists of a URL (pattern), sample
 request data and sample response data. Additional fields are included for
 documentation purposes.
@@ -42,7 +42,9 @@ The skeleton of an ABE file is:
             "request": {
                 "queryParams": <params>,
                 "headers": <headers>,
-                "body": <body>
+                "body": <body>,
+                "url": <url>,
+                "method": <http method>
             },
             "response": {
                 "status": <status>,
@@ -55,14 +57,18 @@ The skeleton of an ABE file is:
 ```
 
 * `description` is an optional text describing the API or the concrete example
-* `url` is a base location for our API.
+* `url` is a base location for our API. It is inherited by each example
+  if declared at the top, but an examples definition (if present) takes
+  precedence.
 * `examples` contains your different API examples for the contract, this can be
   in the form of an `array` or an `object`.
 * `label` is an arbitrary label that you can use to refer to one concrete
   example, useful when you want to include more than one possible responses.
   For instance, `"OK"` and `"Not found"`, or `"Empty"` versus `"One"`
   versus `"Many"`.
-* `http method` is one of the HTTP verbs `GET`, `POST`, `PUT`...
+* `http method` is one of the HTTP verbs `GET`, `POST`, `PUT`... It is
+  inherited by each example if declared at the top, but an examples definition
+  (if present) takes precedence.
 * `params` are query string parameters to add to the URL
 * `headers` is an optional object mapping headers to values
 * `status` is HTTP status: `200`, `404`, etc...
@@ -74,14 +80,13 @@ To illustrate with a concrete example:
 
 ```json
 {
-    "description": "Retrieve a list of brands",
+    "description": "A list of brands",
     "url": "/campaigns/brands/",
     "method": "GET",
     "examples": {
-        "OK": {
+        "Fetch-OK": {
             "description": "Collection found",
             "request": {
-                "url": "/campaigns/brands/",
                 "queryParams": {},
                 "body": {}
             },
@@ -103,6 +108,41 @@ To illustrate with a concrete example:
                     {
                         "id": 4,
                         "name": "John Lewis"
+                    }
+                ]
+            }
+        },
+        "Create-OK": {
+            "description": "Creation of brands is legit",
+            "request": {
+                "method": "POST",
+                "queryParams": {},
+                "body": {
+                    "name": "Nike"
+                }
+            },
+            "response": {
+                "status": 200,
+                "body": [
+                    {
+                        "id": 1,
+                        "name": "Microsoft"
+                    },
+                    {
+                        "id": 2,
+                        "name": "Monsoon"
+                    },
+                    {
+                        "id": 3,
+                        "name": "Mars"
+                    },
+                    {
+                        "id": 4,
+                        "name": "John Lewis"
+                    },
+                    {
+                        "id": 5,
+                        "name": "Nike"
                     }
                 ]
             }
